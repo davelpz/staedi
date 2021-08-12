@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 
 import io.xlate.edi.internal.schema.SchemaUtils;
 import io.xlate.edi.internal.stream.tokenization.Dialect;
+import io.xlate.edi.internal.stream.tokenization.DialectFactory;
 import io.xlate.edi.internal.stream.tokenization.Lexer;
 import io.xlate.edi.internal.stream.tokenization.ProxyEventHandler;
 import io.xlate.edi.schema.EDIReference;
@@ -63,13 +64,14 @@ public class StaEDIStreamReader implements EDIStreamReader, Configurable {
             Charset charset,
             Schema schema,
             Map<String, Object> properties,
-            EDIInputErrorReporter reporter) {
+            EDIInputErrorReporter reporter,
+            DialectFactory dialectFactory) {
 
         this.controlSchema = schema;
         this.properties = new HashMap<>(properties);
         this.reporter = reporter;
         this.proxy = new ProxyEventHandler(location, this.controlSchema, nestHierarchicalLoops());
-        this.lexer = new Lexer(stream, charset, proxy, location, ignoreExtraneousCharacters());
+        this.lexer = new Lexer(stream, charset, proxy, location, ignoreExtraneousCharacters(), dialectFactory);
     }
 
     private void ensureOpen() {

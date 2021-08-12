@@ -10,13 +10,10 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.xlate.edi.internal.stream.tokenization.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import io.xlate.edi.internal.stream.tokenization.CharacterSet;
-import io.xlate.edi.internal.stream.tokenization.Dialect;
-import io.xlate.edi.internal.stream.tokenization.DialectFactory;
-import io.xlate.edi.internal.stream.tokenization.EDIException;
 import io.xlate.edi.schema.EDISimpleType;
 import io.xlate.edi.stream.EDIStreamValidationError;
 
@@ -26,7 +23,7 @@ class TimeValidatorTest implements ValueSetTester {
 
     @BeforeEach
     void setUp() throws EDIException {
-        dialect = DialectFactory.getDialect("UNA");
+        dialect = DefaultDialectFactory.getInstance().getDialect("UNA");
         CharacterSet chars = new CharacterSet();
         "UNA=*.?^~UNB*UNOA=3*005435656=1*006415160=1*060515=1434*00000000000778~".chars().forEach(c -> dialect.appendHeader(chars, (char) c));
     }

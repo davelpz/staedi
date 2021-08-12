@@ -64,6 +64,7 @@ public class Lexer {
     private final StaEDIStreamLocation location;
     private final CharacterSet characters;
     private CharBuffer buffer = CharBuffer.allocate(4096);
+    private DialectFactory dialectFactory = null;
     private Dialect dialect;
 
     private long binaryRemain = -1;
@@ -79,6 +80,12 @@ public class Lexer {
     private Notifier bn;
 
     public Lexer(InputStream stream, Charset charset, EventHandler handler, StaEDIStreamLocation location, boolean extraneousIgnored) {
+        this(stream, charset, handler, location, extraneousIgnored, DefaultDialectFactory.getInstance());
+    }
+
+    public Lexer(InputStream stream, Charset charset, EventHandler handler, StaEDIStreamLocation location, boolean extraneousIgnored,
+                 DialectFactory dialectFactory) {
+        this.dialectFactory = dialectFactory;
         if (stream.markSupported()) {
             this.stream = stream;
         } else {
@@ -371,7 +378,7 @@ public class Lexer {
         buffer.put((char) input);
         final char[] header = buffer.array();
         final int length = buffer.position();
-        dialect = DialectFactory.getDialect(header, 0, length);
+        dialect = dialectFactory.getDialect(header, 0, length);
         for (int i = 0; i < length; i++) {
             dialect.appendHeader(characters, header[i]);
         }

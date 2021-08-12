@@ -20,6 +20,7 @@ import java.io.InputStream;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import io.xlate.edi.internal.stream.tokenization.DialectFactory;
 import io.xlate.edi.schema.Schema;
 
 public abstract class EDIInputFactory extends PropertySupport {
@@ -179,6 +180,35 @@ public abstract class EDIInputFactory extends PropertySupport {
     public abstract EDIStreamReader createEDIStreamReader(InputStream stream,
                                                           String encoding,
                                                           Schema schema)
+            throws EDIStreamException;
+
+    /**
+     * Creates a new {@link EDIStreamReader} using the given {@link InputStream}
+     * and encoding which uses the {@link Schema} for validation of the input's
+     * control structures (interchange, group, transaction) and the {@link DialectFactory}
+     * to use. The encoding must be a valid {@link java.nio.charset.Charset Charset}.
+     *
+     * Note that a separate schema for validation of messages/transactions may
+     * be passed directly to the {@link EDIStreamReader} once the type and
+     * version of the messages is known.
+     *
+     * @param stream
+     *            {@link InputStream} from which the EDI data will be read
+     * @param encoding
+     *            character encoding of the stream, must be a valid
+     *            {@link java.nio.charset.Charset Charset}.
+     * @param schema
+     *            {@link Schema} for control structure validation
+     * @param dialectFactory
+     *            {@link DialectFactory} to use to determine EDI Dialect.
+     * @return a new {@link EDIStreamReader} which reads from the stream
+     * @throws EDIStreamException
+     *             when encoding is not supported
+     */
+    public abstract EDIStreamReader createEDIStreamReader(InputStream stream,
+                                                          String encoding,
+                                                          Schema schema,
+                                                          DialectFactory dialectFactory)
             throws EDIStreamException;
 
     /**

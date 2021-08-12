@@ -24,6 +24,8 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import io.xlate.edi.internal.stream.json.JsonParserFactory;
+import io.xlate.edi.internal.stream.tokenization.DefaultDialectFactory;
+import io.xlate.edi.internal.stream.tokenization.DialectFactory;
 import io.xlate.edi.schema.Schema;
 import io.xlate.edi.stream.EDIInputErrorReporter;
 import io.xlate.edi.stream.EDIInputFactory;
@@ -55,22 +57,26 @@ public class StaEDIInputFactory extends EDIInputFactory {
 
     @Override
     public EDIStreamReader createEDIStreamReader(InputStream stream, String encoding) throws EDIStreamException {
-        return createEDIStreamReader(stream, encoding, null);
+        return createEDIStreamReader(stream, encoding, null, DefaultDialectFactory.getInstance());
     }
 
     @Override
     public EDIStreamReader createEDIStreamReader(InputStream stream, Schema schema) {
         Objects.requireNonNull(stream, "stream must not be null");
-        return new StaEDIStreamReader(stream, StandardCharsets.UTF_8, schema, properties, getErrorReporter());
+        return new StaEDIStreamReader(stream, StandardCharsets.UTF_8, schema, properties, getErrorReporter(), DefaultDialectFactory.getInstance());
     }
 
-    @SuppressWarnings("resource")
     @Override
     public EDIStreamReader createEDIStreamReader(InputStream stream, String encoding, Schema schema) throws EDIStreamException {
+        return createEDIStreamReader(stream, encoding, schema, DefaultDialectFactory.getInstance());
+    }
+    @SuppressWarnings("resource")
+    @Override
+    public EDIStreamReader createEDIStreamReader(InputStream stream, String encoding, Schema schema, DialectFactory dialectFactory) throws EDIStreamException {
         Objects.requireNonNull(stream, "stream must not be null");
 
         if (Charset.isSupported(encoding)) {
-            return new StaEDIStreamReader(stream, Charset.forName(encoding), schema, properties, getErrorReporter());
+            return new StaEDIStreamReader(stream, Charset.forName(encoding), schema, properties, getErrorReporter(), dialectFactory);
         }
 
         throw new EDIStreamException("Unsupported encoding: " + encoding);

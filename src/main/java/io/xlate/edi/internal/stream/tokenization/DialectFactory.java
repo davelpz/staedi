@@ -39,12 +39,12 @@ public interface DialectFactory {
         }
     }
 
-    public static Dialect getDialect(char[] buffer, int start, int length) throws EDIException {
+    public default Dialect getDialect(char[] buffer, int start, int length) throws EDIException {
         String tag = new String(buffer, start, length);
         return getDialect(tag);
     }
 
-    public static Dialect getDialect(String tag) throws EDIException {
+    public default Dialect getDialect(String tag) throws EDIException {
         DialectTag type = DialectTag.fromValue(tag);
 
         if (type != null) {

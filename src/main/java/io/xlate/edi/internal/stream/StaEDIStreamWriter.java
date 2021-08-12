@@ -37,7 +37,7 @@ import java.util.logging.Logger;
 import io.xlate.edi.internal.stream.tokenization.CharacterClass;
 import io.xlate.edi.internal.stream.tokenization.CharacterSet;
 import io.xlate.edi.internal.stream.tokenization.Dialect;
-import io.xlate.edi.internal.stream.tokenization.DialectFactory;
+import io.xlate.edi.internal.stream.tokenization.DefaultDialectFactory;
 import io.xlate.edi.internal.stream.tokenization.EDIException;
 import io.xlate.edi.internal.stream.tokenization.EDIFACTDialect;
 import io.xlate.edi.internal.stream.tokenization.ElementDataHandler;
@@ -415,7 +415,7 @@ public class StaEDIStreamWriter implements EDIStreamWriter, ElementDataHandler, 
         location.incrementSegmentPosition(name);
 
         if (state == State.INITIAL) {
-            dialect = DialectFactory.getDialect(name);
+            dialect = DefaultDialectFactory.getInstance().getDialect(name);
             setupDelimiters();
 
             if (dialect instanceof EDIFACTDialect) {
@@ -424,7 +424,7 @@ public class StaEDIStreamWriter implements EDIStreamWriter, ElementDataHandler, 
                      * Writing the EDIFACT header when delimiters were given via properties requires that
                      * a UNA is written first.
                      */
-                    dialect = DialectFactory.getDialect(EDIFACTDialect.UNA);
+                    dialect = DefaultDialectFactory.getInstance().getDialect(EDIFACTDialect.UNA);
                     writeServiceAdviceString();
                     segmentValidation(name);
                     // Now write the UNB
